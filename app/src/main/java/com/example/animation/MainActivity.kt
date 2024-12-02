@@ -9,6 +9,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -33,8 +34,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -60,16 +63,24 @@ fun Animation(m: Modifier) {
     var appear by remember { mutableStateOf(true) } //背景出現
     var expanded by remember { mutableStateOf(true) } //背景延展
     var fly by remember { mutableStateOf(false) } //火箭升空
+
     val buttonAngle by animateFloatAsState(
         if (appear) 360f else 0f,
         animationSpec = tween(durationMillis = 2500)
     )
+
     val backgroundColor by animateColorAsState(
         if (appear) Color.Transparent else Color.Green,
         animationSpec = tween(2000, 500)
     )
+
     val rocketSize by animateDpAsState(
         if (fly) 75.dp else 150.dp,
+        animationSpec = tween(2000)
+    )
+    //位移動畫
+    val rocketOffset by animateOffsetAsState(
+        if (fly) Offset(200f, -50f) else Offset(200f, 400f),
         animationSpec = tween(2000)
     )
 
@@ -115,6 +126,7 @@ fun Animation(m: Modifier) {
                 contentDescription = "火箭",
                 modifier = Modifier
                     .size(rocketSize)
+                    .offset(rocketOffset.x.dp, rocketOffset.y.dp)
                     .clickable(
                     ) {
                         fly = !fly
